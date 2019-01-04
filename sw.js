@@ -46,13 +46,11 @@ let imgCacheName = 'pwa-img';
 let filesToCache;
 filesToCache = [ // 所需缓存的文件
     '/',
-    '/index.html',
-    '/scripts/app.js',
-    '/assets/imgs/48.png',
-    '/assets/imgs/96.png',
-    '/assets/imgs/192.png',
-    '/dist/js/app.js',
-    '/manifest.json'
+    'index.html',
+    'css/circle.css',
+    'css/bootstrap.css',
+    'css/common.css',
+    'appIcon.png'
 ];
 
 self.addEventListener('install', function(e) {
