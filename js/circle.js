@@ -76,7 +76,7 @@ $(document).ready(()=> {
     //展示开场动画
     contentEle.append(circleInner);
 
-    //跳过读条
+    // 跳过读条
     contentEle.on('click',function () { 
 
         contentEle.off('click');
