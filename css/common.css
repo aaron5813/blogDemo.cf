@@ -1,0 +1,10 @@
+.com-card{
+    height: 10rem;
+    width: 26rem;
+    border: 1px solid #ccc;
+    position: relative;
+    margin: auto;
+    box-shadow: 0px 0px 8px #ccc;
+    padding: 10px;
+    text-align: center;
+}
