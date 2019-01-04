@@ -40,54 +40,48 @@
 //     }))
 // })
 
-var cacheStorageKey = 'cachesName'
-var cacheList = [
-  '/',
-  'index.html',
-  'css/circle.css',
-  'css/bootstrap.css',
-  'css/common.css',
-  'appIcon.png'
-]
+'use strict'
+let cacheName = 'pwa-demo-assets'; // 缓存名字
+let imgCacheName = 'pwa-img';
+let filesToCache;
+filesToCache = [ // 所需缓存的文件
+    '/',
+    '/index.html',
+    '/scripts/app.js',
+    '/assets/imgs/48.png',
+    '/assets/imgs/96.png',
+    '/assets/imgs/192.png',
+    '/dist/js/app.js',
+    '/manifest.json'
+];
 
-// 当浏览器解析完sw文件时触发install事件
 self.addEventListener('install', function(e) {
-  // install事件中一般会将cacheList中要换存的内容通过addAll方法，拉一遍放入caches中
-  e.waitUntil(
-    caches.open(cacheStorageKey).then(function(cache) {
-      return cache.addAll(cacheList)
-    })
-  )
-})
+    e.waitUntil(
+        // 安装服务者时，对需要缓存的文件进行缓存
+        caches.open(cacheName).then(function(cache) {
+            return cache.addAll(filesToCache);
+        })
+    );
+});
 
-// 激活时触发activate事件
-self.addEventListener('activate', function(e) {
-  // active事件中通常做一些过期资源释放的工作，匹配到就从caches中删除
-  var cacheDeletePromises = caches.keys().then(cacheNames => {
-    return Promise.all(cacheNames.map(name => {
-      if (name !== cacheStorageKey) {
-        return caches.delete(name);
-      } else {
-        return Promise.resolve();
-      }
-    }));
-  });
+self.addEventListener('fetch', (e) => {
+    // 判断地址是不是需要实时去请求，是就继续发送请求
+    if (e.request.url.indexOf('/api/400/200') > -1) {
+        e.respondWith(
+            caches.open(imgCacheName).then(function(cache){
+                 return fetch(e.request).then(function (response){
+                    cache.put(e.request.url, response.clone()); // 每请求一次缓存更新一次新加载的图片
+                    return response;
+                });
+            })
+        );
+    } else {
+        e.respondWith(
+            // 匹配到缓存资源，就从缓存中返回数据
+            caches.match(e.request).then(function (response) {
+                return response || fetch(e.request);
+            })
+        );
+    }
 
-  e.waitUntil(
-    Promise.all([cacheDeletePromises])
-  )
-})
-
-self.addEventListener('fetch', function(e) {
-  // 在此编写缓存策略, 需要根据不同文件的扩展名把不同的资源通过不同的策略缓存在caches中，各种css，js，html，图片，都需要单独搞一套缓存策略
-
-  e.respondWith(
-    // 可以通过匹配缓存中的资源返回
-    caches.match(e.request).
-    // 也可以从远端拉取
-    fetch(e.request.url)
-    // 也可以自己造
-    // new Response('自己造')
-    // 也可以通过吧fetch拿到的响应通过caches.put方法放进chches
-  )
-})
+});
