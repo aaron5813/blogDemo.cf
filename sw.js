@@ -9,17 +9,17 @@ var cacheList = [
     'appIcon.png'
 ]
 
-// self.addEventListener('install', function(e) {
-//   e.waitUntil(
-//     caches.open(cacheStorageKey)
-//     .then(cache => cache.addAll(cacheList))
-//     .then(() => self.skipWaiting())
-//   )
-// })
-
-self.addEventListener('install',function(e) {
-  return self.skipWaiting();
+self.addEventListener('install', function(e) {
+  e.waitUntil(
+    caches.open(cacheStorageKey)
+    .then(cache => cache.addAll(cacheList))
+    .then(() => self.skipWaiting())
+  )
 })
+
+// self.addEventListener('install',function(e) {
+//   return self.skipWaiting();
+// })
 
 // self.addEventListener('fetch',function(e){
 //   e.respondWith(
