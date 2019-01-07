@@ -1,14 +1,14 @@
 {
-    "name": "一个PWA示例",
-    "short_name": "PWA示例",
-    "start_url": "https://aaron5813.github.io/blogDemo.github.io/",
+    "name": "PwaDemo",
+    "short_name": "PwaDemo",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#fff",
     "theme_color": "#3eaf7c",
     "icons": [
       {
-        "src": "appIcon.png",
-        "sizes": "120x120",
+        "src": "i.png",
+        "sizes": "250x250",
         "type": "image/png"
       }
     ]
