@@ -1,51 +1,56 @@
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.1.0/workbox-sw.js");
-var cacheStorageKey = 'minimal-pwa-1'
+console.log('Script loaded!')
+var cacheStorageKey = 'minimal-pwa-8'
+
 var cacheList = [
-  '/',
+    '/',
     'index.html',
     'css/circle.css',
     'css/bootstrap.css',
     'css/common.css',
-    'appIcon.png'
+    'i.png'
 ]
 
-// self.addEventListener('install', function(e) {
-//   e.waitUntil(
-//     caches.open(cacheStorageKey)
-//     .then(cache => cache.addAll(cacheList))
-//     .then(() => self.skipWaiting())
-//   )
-// })
-
-self.addEventListener('install',function(e) {
-  return self.skipWaiting();
+self.addEventListener('install', function(e) {
+  console.log('Cache event!')
+  e.waitUntil(
+    caches.open(cacheStorageKey).then(function(cache) {
+      console.log('Adding to Cache:', cacheList)
+      return cache.addAll(cacheList)
+    }).then(function() {
+      console.log('Skip waiting!')
+      return self.skipWaiting()
+    })
+  )
 })
 
-// self.addEventListener('fetch',function(e){
-//   e.respondWith(
-//     caches.match(e.request).then(function(response){
-//       if(response != null){
-//         return response
-//       }
-//       return fetch(e.request.url)
-//     })
-//   )
-// })
+self.addEventListener('activate', function(e) {
+  console.log('Activate event')
+  e.waitUntil(
+    Promise.all(
+      caches.keys().then(cacheNames => {
+        return cacheNames.map(name => {
+          if (name !== cacheStorageKey) {
+            return caches.delete(name)
+          }
+        })
+      })
+    ).then(() => {
+      console.log('Clients claims.')
+      return self.clients.claim()
+    })
+  )
+})
 
-// self.addEventListener('activate',function(e){
-//   e.waitUntil(
-//     //获取所有cache名称
-//     caches.keys().then(cacheNames => {
-//       return Promise.all(
-//         // 获取所有不同于当前版本名称cache下的内容
-//         cacheNames.filter(cacheNames => {
-//           return cacheNames !== cacheStorageKey
-//         }).map(cacheNames => {
-//           return caches.delete(cacheNames)
-//         })
-//       )
-//     }).then(() => {
-//       return self.clients.claim()
-//     })
-//   )
-// })
+self.addEventListener('fetch', function(e) {
+  // console.log('Fetch event:', e.request.url)
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      if (response != null) {
+        console.log('Using cache for:', e.request.url)
+        return response
+      }
+      console.log('Fallback to fetch:', e.request.url)
+      return fetch(e.request.url)
+    })
+  )
+})
