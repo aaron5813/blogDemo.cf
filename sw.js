@@ -20,7 +20,7 @@ self.addEventListener('install', function(e) {
       console.log('Skip waiting!')
       return self.skipWaiting()
     })
-  )
+  ) 
 })
 
 self.addEventListener('activate', function(e) {
